@@ -5,13 +5,13 @@ healthcheck,: install_requirements healthcheck_docker healthcheck_env
 healthcheck: install_requirements healthcheck_docker healthcheck_env
 
 sign_language_translator: healthcheck ruff
-	docker compose -f docker-compose.yaml up --build frontend backend
+	docker compose -f docker-compose.yaml up --build frontend backend -d
 
 backend: healthcheck, ruff
-		docker compose -f docker-compose.yaml up --build backend
+		docker compose -f docker-compose.yaml up --build backend -d
 
 frontend: healthcheck, ruff
-		docker compose -f docker-compose.yaml up --build frontend
+		docker compose -f docker-compose.yaml up --build frontend -d
 
 OSFLAG 				:=
 ifeq ($(OS),Windows_NT)
