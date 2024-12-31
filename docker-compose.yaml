@@ -1,0 +1,16 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend.dockerfile
+    container_name: backend
+    ports:
+      - "80:80"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend.dockerfile
+    container_name: frontend
+    ports:
+      - "8501:8501"

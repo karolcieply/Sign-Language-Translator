@@ -1,0 +1,22 @@
+repos:
+
+  # Some out-of-the-box hooks for pre-commit
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+
+  # Linter and formatter
+  - repo: https://github.com/astral-sh/ruff
+    rev: v0.0.287
+    hooks:
+      - id: ruff
+        args: ["--fix"]
+      - id: ruff-format
+
+  # Discover secrets using Gitleaks
+  - repo: https://github.com/zricethezav/gitleaks
+    rev: v8.18.1
+    hooks:
+      - id: gitleaks
+        args: [ --log-level=warn, --report-path=.git/hooks/gitleaks.log ]
