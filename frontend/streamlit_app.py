@@ -24,6 +24,10 @@ login_page = st.Page(login, title="Log in", icon=":material/login:")
 logout_page = st.Page(logout, title="Log out", icon=":material/logout:")
 
 
-pg = st.navigation({"Account": [logout_page]}) if st.session_state.logged_in else st.navigation([login_page])
+pg = (
+    st.navigation({"Account": [logout_page]})
+    if st.session_state.logged_in
+    else st.navigation([login_page])
+)
 
 pg.run()
