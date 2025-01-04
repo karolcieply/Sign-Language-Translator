@@ -1,8 +1,6 @@
 """Main module for fastapi backend application."""
-
-from src.db import init_db
-
 from fastapi import FastAPI
+from src.db import init_db
 from src.routers.image_router import image_router
 from src.routers.recording_router import recording_router
 from src.routers.user_router import user_router
@@ -20,5 +18,6 @@ def read_root() -> dict[str, str]:
 
 
 @app.on_event("startup")
-async def startup_event():
+async def startup_event() -> None:
+    """Startup event to initialize the database."""
     init_db()

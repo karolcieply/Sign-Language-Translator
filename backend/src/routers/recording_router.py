@@ -66,7 +66,7 @@ def read_recordings(*, session: Annotated[Session, Depends(get_session)]) -> lis
         list[Recording]: A list of all recordings in the database.
     """
     recordings = session.exec(select(Recording)).all()
-    return recordings
+    return [Recording.model_validate(recording) for recording in recordings]
 
 
 @recording_router.put("/recordings/{recording_id}", response_model=Recording)  # noqa: FAST001

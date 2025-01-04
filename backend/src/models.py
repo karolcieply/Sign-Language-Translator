@@ -46,7 +46,7 @@ class Recording(SQLModel, table=True):
     id: int | None = Field(primary_key=True, default=None)
     user_id: int = Field(foreign_key="user.id", ondelete="CASCADE")
     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
-    prediction: str | None = None  # TODO change to ENUM
+    prediction: str | None = None  # change to ENUM
     feedback: float | None = None
 
     images: list["Image"] = Relationship(
