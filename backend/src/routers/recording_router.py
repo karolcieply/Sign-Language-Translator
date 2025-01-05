@@ -9,7 +9,7 @@ from src.models import Recording
 recording_router = APIRouter()
 
 
-@recording_router.post("/recordings/", response_model=Recording)  # noqa: FAST001
+@recording_router.post("/recordings/")
 def create_recording(
     *, session: Annotated[Session, Depends(get_session)], recording: Recording,
 ) -> Recording:
@@ -31,7 +31,7 @@ def create_recording(
     return recording
 
 
-@recording_router.get("/recordings/{recording_id}", response_model=Recording)  # noqa: FAST001
+@recording_router.get("/recordings/{recording_id}")
 def read_recording(
     *, session: Annotated[Session, Depends(get_session)], recording_id: int,
 ) -> Recording:
@@ -53,7 +53,7 @@ def read_recording(
     return recording
 
 
-@recording_router.get("/recordings/", response_model=list[Recording])  # noqa: FAST001
+@recording_router.get("/recordings/")
 def read_recordings(*, session: Annotated[Session, Depends(get_session)]) -> list[Recording]:
     """Endpoint to retrieve a list of recordings.
 
@@ -69,7 +69,7 @@ def read_recordings(*, session: Annotated[Session, Depends(get_session)]) -> lis
     return [Recording.model_validate(recording) for recording in recordings]
 
 
-@recording_router.put("/recordings/{recording_id}", response_model=Recording)  # noqa: FAST001
+@recording_router.put("/recordings/{recording_id}")
 def update_recording(
     *,
     session: Annotated[Session, Depends(get_session)],
@@ -102,7 +102,7 @@ def update_recording(
     return db_recording
 
 
-@recording_router.delete("/recordings/{recording_id}", response_model=Recording)  # noqa: FAST001
+@recording_router.delete("/recordings/{recording_id}")
 def delete_recording(
     *, session: Annotated[Session, Depends(get_session)], recording_id: int,
 ) -> Recording:

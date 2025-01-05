@@ -9,7 +9,7 @@ from src.models import User, UserCreate, UserRead, UserUpdate
 user_router = APIRouter()
 
 
-@user_router.post("/users/", response_model=UserRead)  # noqa: FAST001
+@user_router.post("/users/")
 def create_user(*, session: Annotated[Session, Depends(get_session)], user: UserCreate) -> UserRead:
     """Create a new user.
 
@@ -31,7 +31,7 @@ def create_user(*, session: Annotated[Session, Depends(get_session)], user: User
     return UserRead.model_validate(user)
 
 
-@user_router.get("/users/{user_id}", response_model=UserRead)  # noqa: FAST001
+@user_router.get("/users/{user_id}")
 def read_user(*, session: Annotated[Session, Depends(get_session)], user_id: int) -> UserRead:
     """Retrieve a user by their user ID.
 
@@ -51,7 +51,7 @@ def read_user(*, session: Annotated[Session, Depends(get_session)], user_id: int
     return UserRead.model_validate(user)
 
 
-@user_router.get("/users/", response_model=list[UserRead])  # noqa: FAST001
+@user_router.get("/users/")
 def read_users(*, session: Annotated[Session, Depends(get_session)]) -> list[UserRead]:
     """Retrieve a list of users.
 
@@ -68,7 +68,7 @@ def read_users(*, session: Annotated[Session, Depends(get_session)]) -> list[Use
     return [UserRead.model_validate(user) for user in users]
 
 
-@user_router.put("/users/{user_id}", response_model=UserRead)  # noqa: FAST001
+@user_router.put("/users/{user_id}")
 def update_user(
     *, session: Annotated[Session, Depends(get_session)], user_id: int, user: UserUpdate
 ) -> UserRead:
@@ -98,7 +98,7 @@ def update_user(
     return UserRead.model_validate(db_user)
 
 
-@user_router.delete("/users/{user_id}", response_model=UserRead)  # noqa: FAST001
+@user_router.delete("/users/{user_id}")
 def delete_user(*, session: Annotated[Session, Depends(get_session)], user_id: int) -> UserRead:
     """Delete a user by user ID.
 

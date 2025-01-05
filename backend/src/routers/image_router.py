@@ -9,7 +9,7 @@ from src.models import Image
 image_router = APIRouter()
 
 
-@image_router.post("/images/", response_model=Image)  # noqa: FAST001
+@image_router.post("/images/")
 def create_image(*, session: Annotated[Session, Depends(get_session)], image: Image) -> Image:
     """Create a new image entry in the database.
 
@@ -30,7 +30,7 @@ def create_image(*, session: Annotated[Session, Depends(get_session)], image: Im
     return image
 
 
-@image_router.get("/images/{image_id}", response_model=Image)  # noqa: FAST001
+@image_router.get("/images/{image_id}")
 def read_image(*, session: Annotated[Session, Depends(get_session)], image_id: int) -> Image:
     """Retrieve an image by its ID.
     
@@ -50,7 +50,7 @@ def read_image(*, session: Annotated[Session, Depends(get_session)], image_id: i
     return image
 
 
-@image_router.get("/images/", response_model=list[Image])  # noqa: FAST001
+@image_router.get("/images/")
 def read_images(*, session: Annotated[Session, Depends(get_session)]) -> list[Image]:
     """Endpoint to retrieve a list of images.
 
@@ -66,7 +66,7 @@ def read_images(*, session: Annotated[Session, Depends(get_session)]) -> list[Im
     return images
 
 
-@image_router.put("/images/{image_id}", response_model=Image)  # noqa: FAST001
+@image_router.put("/images/{image_id}")
 def update_image(
     *, session: Annotated[Session, Depends(get_session)], image_id: int, image: Image
 ) -> Image:
@@ -96,7 +96,7 @@ def update_image(
     return db_image
 
 
-@image_router.delete("/images/{image_id}", response_model=Image)  # noqa: FAST001
+@image_router.delete("/images/{image_id}")
 def delete_image(*, session: Annotated[Session, Depends(get_session)], image_id: int) -> Image:
     """Delete an image by its ID.
 
