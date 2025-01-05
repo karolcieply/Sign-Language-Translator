@@ -2,7 +2,8 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlmodel import select
 from src.db import get_session
 from src.models import Recording
 
@@ -10,8 +11,8 @@ recording_router = APIRouter()
 
 
 @recording_router.post("/recordings/")
-def create_recording(
-    *, session: Annotated[Session, Depends(get_session)], recording: Recording,
+async def create_recording(
+    *, session: Annotated[AsyncSession, Depends(get_session)], recording: Recording,
 ) -> Recording:
     """Create a new recording.
 
@@ -26,14 +27,14 @@ def create_recording(
         Recording: The newly created recording instance.
     """
     session.add(recording)
-    session.commit()
-    session.refresh(recording)
+    await session.commit()
+    await session.refresh(recording)
     return recording
 
 
 @recording_router.get("/recordings/{recording_id}")
-def read_recording(
-    *, session: Annotated[Session, Depends(get_session)], recording_id: int,
+async def read_recording(
+    *, session: Annotated[AsyncSession, Depends(get_session)], recording_id: int,
 ) -> Recording:
     """Endpoint to retrieve a recording by its ID.
 
@@ -47,14 +48,14 @@ def read_recording(
     Raises:
         HTTPException: If the recording is not found, raises a 404 HTTP exception.
     """
-    recording = session.get(Recording, recording_id)
+    recording = await session.get(Recording, recording_id)
     if not recording:
         raise HTTPException(status_code=404, detail="Recording not found")
     return recording
 
 
 @recording_router.get("/recordings/")
-def read_recordings(*, session: Annotated[Session, Depends(get_session)]) -> list[Recording]:
+async def read_recordings(*, session: Annotated[AsyncSession, Depends(get_session)]) -> list[Recording]:
     """Endpoint to retrieve a list of recordings.
 
     This endpoint retrieves all recordings from the database using the provided session.
@@ -65,14 +66,14 @@ def read_recordings(*, session: Annotated[Session, Depends(get_session)]) -> lis
     Returns:
         list[Recording]: A list of all recordings in the database.
     """
-    recordings = session.exec(select(Recording)).all()
-    return [Recording.model_validate(recording) for recording in recordings]
+    recordings = await session.execute(select(Recording))
+    return recordings.scalars().all()
 
 
 @recording_router.put("/recordings/{recording_id}")
-def update_recording(
+async def update_recording(
     *,
-    session: Annotated[Session, Depends(get_session)],
+    session: Annotated[AsyncSession, Depends(get_session)],
     recording_id: int,
     recording: Recording
 ) -> Recording:
@@ -91,20 +92,20 @@ def update_recording(
     Raises:
         HTTPException: If the recording with the given ID is not found.
     """
-    db_recording = session.get(Recording, recording_id)
+    db_recording = await session.get(Recording, recording_id)
     if not db_recording:
         raise HTTPException(status_code=404, detail="Recording not found")
     for key, value in recording.model_dump(exclude_unset=True).items():
         setattr(db_recording, key, value)
     session.add(db_recording)
-    session.commit()
-    session.refresh(db_recording)
+    await session.commit()
+    await session.refresh(db_recording)
     return db_recording
 
 
 @recording_router.delete("/recordings/{recording_id}")
-def delete_recording(
-    *, session: Annotated[Session, Depends(get_session)], recording_id: int,
+async def delete_recording(
+    *, session: Annotated[AsyncSession, Depends(get_session)], recording_id: int,
 ) -> Recording:
     """Delete a recording by its ID.
 
@@ -118,9 +119,9 @@ def delete_recording(
     Raises:
         HTTPException: If the recording with the given ID is not found.
     """
-    recording = session.get(Recording, recording_id)
+    recording = await session.get(Recording, recording_id)
     if not recording:
         raise HTTPException(status_code=404, detail="Recording not found")
-    session.delete(recording)
-    session.commit()
+    await session.delete(recording)
+    await session.commit()
     return recording

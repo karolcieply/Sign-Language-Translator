@@ -2,7 +2,8 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session, select
+from sqlmodel import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from src.db import get_session
 from src.models import Image
 
@@ -10,7 +11,7 @@ image_router = APIRouter()
 
 
 @image_router.post("/images/")
-def create_image(*, session: Annotated[Session, Depends(get_session)], image: Image) -> Image:
+async def create_image(*, session: Annotated[AsyncSession, Depends(get_session)], image: Image) -> Image:
     """Create a new image entry in the database.
 
     This endpoint allows for the creation of a new image entry in the database.
@@ -25,13 +26,13 @@ def create_image(*, session: Annotated[Session, Depends(get_session)], image: Im
         Image: The newly created image object with updated information from the database.
     """
     session.add(image)
-    session.commit()
-    session.refresh(image)
+    await session.commit()
+    await session.refresh(image)
     return image
 
 
 @image_router.get("/images/{image_id}")
-def read_image(*, session: Annotated[Session, Depends(get_session)], image_id: int) -> Image:
+async def read_image(*, session: Annotated[AsyncSession, Depends(get_session)], image_id: int) -> Image:
     """Retrieve an image by its ID.
     
     Args:
@@ -44,14 +45,14 @@ def read_image(*, session: Annotated[Session, Depends(get_session)], image_id: i
     Raises:
         HTTPException: If the image is not found, raises a 404 HTTP exception.
     """
-    image = session.get(Image, image_id)
+    image = await session.get(Image, image_id)
     if not image:
         raise HTTPException(status_code=404, detail="Image not found")
     return image
 
 
 @image_router.get("/images/")
-def read_images(*, session: Annotated[Session, Depends(get_session)]) -> list[Image]:
+async def read_images(*, session: Annotated[AsyncSession, Depends(get_session)]) -> list[Image]:
     """Endpoint to retrieve a list of images.
 
     This endpoint retrieves all images from the database using the provided session.
@@ -62,13 +63,13 @@ def read_images(*, session: Annotated[Session, Depends(get_session)]) -> list[Im
     Returns:
         list[Image]: A list of Image objects retrieved from the database.
     """
-    images = session.exec(select(Image)).all()
-    return images
+    images = await session.execute(select(Image))
+    return images.scalars().all()
 
 
 @image_router.put("/images/{image_id}")
-def update_image(
-    *, session: Annotated[Session, Depends(get_session)], image_id: int, image: Image
+async def update_image(
+    *, session: Annotated[AsyncSession, Depends(get_session)], image_id: int, image: Image
 ) -> Image:
     """Update an existing image.
 
@@ -85,19 +86,19 @@ def update_image(
     Raises:
         HTTPException: If the image with the specified ID is not found.
     """
-    db_image = session.get(Image, image_id)
+    db_image = await session.get(Image, image_id)
     if not db_image:
         raise HTTPException(status_code=404, detail="Image not found")
     for key, value in image.model_dump(exclude_unset=True).items():
         setattr(db_image, key, value)
     session.add(db_image)
-    session.commit()
-    session.refresh(db_image)
+    await session.commit()
+    await session.refresh(db_image)
     return db_image
 
 
 @image_router.delete("/images/{image_id}")
-def delete_image(*, session: Annotated[Session, Depends(get_session)], image_id: int) -> Image:
+async def delete_image(*, session: Annotated[AsyncSession, Depends(get_session)], image_id: int) -> Image:
     """Delete an image by its ID.
 
     Args:
@@ -110,9 +111,9 @@ def delete_image(*, session: Annotated[Session, Depends(get_session)], image_id:
     Raises:
         HTTPException: If the image with the given ID is not found.
     """
-    image = session.get(Image, image_id)
+    image = await session.get(Image, image_id)
     if not image:
         raise HTTPException(status_code=404, detail="Image not found")
-    session.delete(image)
-    session.commit()
+    await session.delete(image)
+    await session.commit()
     return image

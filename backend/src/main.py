@@ -20,4 +20,4 @@ def read_root() -> dict[str, str]:
 @app.on_event("startup")
 async def startup_event() -> None:
     """Startup event to initialize the database."""
-    init_db()
+    await init_db()

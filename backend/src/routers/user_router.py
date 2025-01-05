@@ -2,7 +2,8 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session, select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlmodel import select
 from src.db import get_session
 from src.models import User, UserCreate, UserRead, UserUpdate
 
@@ -10,7 +11,7 @@ user_router = APIRouter()
 
 
 @user_router.post("/users/")
-def create_user(*, session: Annotated[Session, Depends(get_session)], user: UserCreate) -> UserRead:
+async def create_user(*, session: Annotated[AsyncSession, Depends(get_session)], user: UserCreate) -> UserRead:
     """Create a new user.
 
     This endpoint creates a new user in the database using the provided user data.
@@ -26,13 +27,13 @@ def create_user(*, session: Annotated[Session, Depends(get_session)], user: User
     """
     user = User.model_validate(user)
     session.add(user)
-    session.commit()
-    session.refresh(user)
+    await session.commit()
+    await session.refresh(user)
     return UserRead.model_validate(user)
 
 
 @user_router.get("/users/{user_id}")
-def read_user(*, session: Annotated[Session, Depends(get_session)], user_id: int) -> UserRead:
+async def read_user(*, session: Annotated[AsyncSession, Depends(get_session)], user_id: int) -> UserRead:
     """Retrieve a user by their user ID.
 
     Args:
@@ -45,14 +46,14 @@ def read_user(*, session: Annotated[Session, Depends(get_session)], user_id: int
     Raises:
         HTTPException: If the user with the specified ID is not found.
     """
-    user = session.get(User, user_id)
+    user = await session.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return UserRead.model_validate(user)
 
 
 @user_router.get("/users/")
-def read_users(*, session: Annotated[Session, Depends(get_session)]) -> list[UserRead]:
+async def read_users(*, session: Annotated[AsyncSession, Depends(get_session)]) -> list[UserRead]:
     """Retrieve a list of users.
 
     This endpoint retrieves all users from the database and returns them as a list
@@ -64,13 +65,13 @@ def read_users(*, session: Annotated[Session, Depends(get_session)]) -> list[Use
     Returns:
         list[UserRead]: A list of users in the `UserRead` model format.
     """
-    users = session.exec(select(User)).all()
-    return [UserRead.model_validate(user) for user in users]
+    users = await session.execute(select(User))
+    return [UserRead.model_validate(user) for user in users.scalars().all()]
 
 
 @user_router.put("/users/{user_id}")
-def update_user(
-    *, session: Annotated[Session, Depends(get_session)], user_id: int, user: UserUpdate
+async def update_user(
+    *, session: Annotated[AsyncSession, Depends(get_session)], user_id: int, user: UserUpdate
 ) -> UserRead:
     """Update an existing user.
 
@@ -85,7 +86,7 @@ def update_user(
     Returns:
         UserRead: The updated user data.
     """
-    db_user = session.get(User, user_id)
+    db_user = await session.get(User, user_id)
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
     for key, value in user.model_dump(exclude_unset=True, exclude=["password"]).items():
@@ -93,13 +94,13 @@ def update_user(
     if user.password:
         db_user.hashed_password = user.hashed_password
     session.add(db_user)
-    session.commit()
-    session.refresh(db_user)
+    await session.commit()
+    await session.refresh(db_user)
     return UserRead.model_validate(db_user)
 
 
 @user_router.delete("/users/{user_id}")
-def delete_user(*, session: Annotated[Session, Depends(get_session)], user_id: int) -> UserRead:
+async def delete_user(*, session: Annotated[AsyncSession, Depends(get_session)], user_id: int) -> UserRead:
     """Delete a user by user ID.
 
     Args:
@@ -115,6 +116,6 @@ def delete_user(*, session: Annotated[Session, Depends(get_session)], user_id: i
     user = session.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
-    session.delete(user)
-    session.commit()
+    await session.delete(user)
+    await session.commit()
     return UserRead.model_validate(user)
