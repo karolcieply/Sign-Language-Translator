@@ -15,6 +15,7 @@ class User(SQLModel, table=True):
         email (str): The email address of the user.
         hashed_password (str): The hashed password of the user.
         is_active (bool): Indicates whether the user is active. Defaults to True.
+        is_admin (bool): Indicates whether the user is an admin. Defaults to False.
         recordings (list[Recording]): A list of recordings associated with the user.
                                       The relationship is bidirectional and supports cascade delete.
     """
@@ -24,6 +25,7 @@ class User(SQLModel, table=True):
     email: str
     hashed_password: str
     is_active: bool = True
+    is_admin: bool = False
 
     recordings: list["Recording"] = Relationship(
         back_populates="user", cascade_delete=True
@@ -81,11 +83,13 @@ class UserCreate(SQLModel):
         username (str): The username of the user.
         email (str): The email address of the user.
         password (str): The password for the user.
+        is_admin (bool): Status indicating whether the user is an admin. Defaults to False.
     """
 
     username: str
     email: str
     password: str
+    is_admin: bool = False
 
     @property
     def hashed_password(self) -> str:
@@ -101,12 +105,15 @@ class UserRead(SQLModel):
         username (str): Username of the user.
         email (str): Email address of the user.
         is_active (bool): Status indicating whether the user is active.
+        is_admin (bool): Status indicating whether the user is an admin.
+        hashed_password (str): Hashed password of the user.
     """
 
     id: int
     username: str
     email: str
     is_active: bool
+    is_admin: bool
     hashed_password: str
 
 
@@ -118,12 +125,14 @@ class UserUpdate(SQLModel):
         email (str): The email address of the user.
         password (str): The password for the user.
         is_active (bool): Status indicating whether the user is active.
+        is_admin (bool): Status indicating whether the user is an admin.
     """
 
     username: str | None = None
     email: str | None = None
     password: str | None = None
     is_active: bool | None = None
+    is_admin: bool | None = None
 
     @property
     def hashed_password(self) -> str:

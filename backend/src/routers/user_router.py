@@ -88,14 +88,10 @@ def update_user(
     db_user = session.get(User, user_id)
     if not db_user:
         raise HTTPException(status_code=404, detail="User not found")
-    if user.username is not None:
-        db_user.username = user.username
-    if user.email is not None:
-        db_user.email = user.email
-    if user.password is not None:
+    for key, value in user.model_dump(exclude_unset=True, exclude=["password"]).items():
+        setattr(db_user, key, value)
+    if user.password:
         db_user.hashed_password = user.hashed_password
-    if user.is_active is not None:
-        db_user.is_active = user.is_active
     session.add(db_user)
     session.commit()
     session.refresh(db_user)

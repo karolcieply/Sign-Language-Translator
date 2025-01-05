@@ -94,10 +94,8 @@ def update_recording(
     db_recording = session.get(Recording, recording_id)
     if not db_recording:
         raise HTTPException(status_code=404, detail="Recording not found")
-    db_recording.user_id = recording.user_id
-    db_recording.created_at = recording.created_at
-    db_recording.prediction = recording.prediction
-    db_recording.feedback = recording.feedback
+    for key, value in recording.model_dump(exclude_unset=True).items():
+        setattr(db_recording, key, value)
     session.add(db_recording)
     session.commit()
     session.refresh(db_recording)

@@ -88,8 +88,8 @@ def update_image(
     db_image = session.get(Image, image_id)
     if not db_image:
         raise HTTPException(status_code=404, detail="Image not found")
-    db_image.recording_id = image.recording_id
-    db_image.url = image.url
+    for key, value in image.model_dump(exclude_unset=True).items():
+        setattr(db_image, key, value)
     session.add(db_image)
     session.commit()
     session.refresh(db_image)
