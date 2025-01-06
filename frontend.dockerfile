@@ -21,8 +21,8 @@ COPY pyproject.toml poetry.lock /app/
 RUN poetry install --only main,frontend --no-root \
     && rm -rf $POETRY_CACHE_DIR
 
-COPY frontend /app/
+COPY frontend /app/frontend
 
 EXPOSE 8501
 
-CMD ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+CMD ["python3", "-m", "streamlit", "run", "frontend/home.py", "--server.port=8501", "--server.address=0.0.0.0"]
