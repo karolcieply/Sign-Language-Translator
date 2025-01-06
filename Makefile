@@ -7,7 +7,7 @@ healthcheck: install_requirements healthcheck_docker healthcheck_env
 sign_language_translator: healthcheck ruff
 	docker compose -f docker-compose.yaml up --build frontend backend -d
 
-backend: healthcheck, ruff
+backend: healthcheck, 
 		docker compose -f docker-compose.yaml up --build backend -d
 
 frontend: healthcheck, ruff
