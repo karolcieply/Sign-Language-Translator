@@ -2,7 +2,7 @@
 name = "sign-lanugage-translator"
 version = "0.1.0"
 description = "Realizacja projektu w ramach przedmiotu Modelowanie i analiza systemów informatycznych"
-authors = ["Your Name <you@example.com>"]
+authors = ["Wojciech Jasiewicz <mail>; Karol Ciepły <mail>; Kacper Moll kacmol418@polsl.pl"]
 license = "MIT"
 readme = "README.md"
 
@@ -10,6 +10,10 @@ readme = "README.md"
 python = "~3.12"
 pydantic = "^2.10.3"
 ruff = "^0.8.4"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-multipart = "^0.0.20"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+pyjwt = "^2.10.1"
 
 [tool.poetry.group.backend.dependencies]
 fastapi = "^0.115.6"
