@@ -10,6 +10,10 @@ readme = "README.md"
 python = "~3.12"
 pydantic = "^2.10.3"
 ruff = "^0.8.4"
+sqlmodel = "^0.0.22"
+pydantic-settings = "^2.7.1"
+sqlalchemy = {extras = ["asyncio"], version = "^2.0.36"}
+asyncpg = "^0.30.0"
 
 [tool.poetry.group.backend.dependencies]
 fastapi = "^0.115.6"
