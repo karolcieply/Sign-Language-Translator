@@ -22,7 +22,7 @@ COPY pyproject.toml poetry.lock /app/
 RUN poetry install --only main,backend --no-root \
     && rm -rf $POETRY_CACHE_DIR
 
-COPY backend/src /app/src
+COPY backend /app/backend
 
 EXPOSE 80
 

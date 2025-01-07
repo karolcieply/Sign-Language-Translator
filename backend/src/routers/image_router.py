@@ -4,8 +4,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.db import get_session
-from src.models import Image
+from backend.src.db import get_session
+from backend.src.models import Image
 
 image_router = APIRouter()
 

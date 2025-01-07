@@ -4,8 +4,8 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
-from src.db import get_session
-from src.models import User, UserCreate, UserRead, UserUpdate
+from backend.src.db import get_session
+from backend.src.models import User, UserCreate, UserRead, UserUpdate
 
 user_router = APIRouter()
 

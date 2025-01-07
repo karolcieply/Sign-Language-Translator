@@ -1,9 +1,10 @@
 """Main module for fastapi backend application."""
 from fastapi import FastAPI
-from src.db import init_db
-from src.routers.image_router import image_router
-from src.routers.recording_router import recording_router
-from src.routers.user_router import user_router
+from backend.src.db import init_db
+from backend.src.routers.image_router import image_router
+from backend.src.routers.recording_router import recording_router
+from backend.src.routers.user_router import user_router
+from backend.src.routers.translation_router import translation_router
 
 app = FastAPI()
 app.include_router(user_router, tags=["User"])
