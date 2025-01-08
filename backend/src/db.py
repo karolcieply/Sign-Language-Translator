@@ -16,7 +16,7 @@ async def get_session() -> AsyncSession:
         yield session
         await session.commit()
     finally:
-        session.close()
+        await session.close()
 
 
 async def init_db() -> None:
