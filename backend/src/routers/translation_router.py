@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.src.db import get_session
 from backend.src.db_models import Image, Recording
-from backend.src.models import TranslateRequest
+from backend.src.models import FeedbackRequest, TranslateRequest
 
 translation_router = APIRouter()
 
@@ -36,15 +36,15 @@ async def translate(data: TranslateRequest, session: Annotated[AsyncSession, Dep
 
     # perform prediction
 
-    return {"prediction": "tomek"}
+    return {"prediction": "tomek", "recording_id": 1}
 
 
 @translation_router.post("/feedback")
-async def feedback(data: dict, session: Annotated[AsyncSession, Depends(get_session)]) -> dict:
+async def feedback(data: FeedbackRequest, session: Annotated[AsyncSession, Depends(get_session)]) -> dict:
     """Save feedback for a recording."""
-    recording_id = data["recording_id"]
-    feedback = data["feedback"]
-    await session.execute(Recording.update().where(Recording.id == recording_id).values(feedback=feedback))
+    recording = await session.get(Recording, data.recording_id)
+    recording.feedback = data.feedback
+    await session.commit()
 
     # save feedback
 

@@ -24,6 +24,13 @@ class TranslateRequest(BaseModel):
     frames: list[str]
 
 
+class FeedbackRequest(BaseModel):
+    """Pydantic model for the feedback request body."""
+
+    recording_id: int
+    feedback: int
+
+
 class LoginResponse(BaseModel):
     """Pydantic model for the login response body."""
 

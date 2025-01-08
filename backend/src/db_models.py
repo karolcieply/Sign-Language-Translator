@@ -39,7 +39,7 @@ class Recording(SQLModel, table=True):
         user_id (int): The ID of the user who created the recording. This is a foreign key referencing the user table.
         created_at (datetime.datetime): The timestamp when the recording was created. Defaults to the current datetime.
         prediction (str | None): The predicted translation of the recording.
-        feedback (float | None): The feedback score for the recording.
+        feedback (int | None): The feedback score for the recording.
         images (list["Image"]): A list of images associated with the recording.
         user (User): The user who created the recording.
     """
@@ -48,7 +48,7 @@ class Recording(SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id", ondelete="CASCADE")
     created_at: datetime.datetime = Field(default_factory=datetime.datetime.now)
     prediction: str | None = None  # change to ENUM
-    feedback: float | None = None
+    feedback: int | None = None
 
     images: list["Image"] = Relationship(back_populates="recording", cascade_delete=True)
     user: User = Relationship(back_populates="recordings")

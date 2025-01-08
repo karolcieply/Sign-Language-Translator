@@ -1,4 +1,4 @@
-"""Translation page with camera capture and feedback functionality."""
+"""Translation page."""
 
 import streamlit as st
 import streamlit.components.v1 as components
@@ -186,8 +186,7 @@ html_code = f"""
         headers: {{ "Content-Type": "application/json" }},
         body: JSON.stringify({{
           recording_id: recordingId,
-          feedback: feedback,
-          user_id: USER_ID
+          feedback: feedback
         }})
       }})
       .then(response => {{
