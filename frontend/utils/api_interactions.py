@@ -1,14 +1,17 @@
-import os
+"""API interactions for the frontend."""
+
 from http import HTTPStatus
-import streamlit as st
 
 import requests
+import streamlit as st
 from pydantic import ValidationError
 
-from frontend.models import UserRequest, LoginRequest, LoginResponse, FrontendSettings, RegisterUserRequest
+from frontend.models import FrontendSettings, LoginRequest, LoginResponse, RegisterUserRequest, UserRequest
 
 settings = FrontendSettings()
 backend_url = settings.backend_server
+
+
 def api_login(request_data: LoginRequest) -> LoginResponse | dict:
     """Log in user and return access token and admin status.
 
@@ -75,9 +78,7 @@ def api_get_users() -> list[UserRequest]:
     """
     try:
         with requests.get(
-            url=f"http://{backend_url}/users",
-            headers={"Content-Type": "application/json"},
-            timeout=10,
+            url=f"http://{backend_url}/users", headers={"Content-Type": "application/json"}, timeout=10
         ) as response:
             response.raise_for_status()
             return response.json()

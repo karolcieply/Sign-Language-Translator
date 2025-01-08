@@ -1,3 +1,5 @@
+"""Translation page with camera capture and feedback functionality."""
+
 import streamlit as st
 import streamlit.components.v1 as components
 

@@ -52,6 +52,19 @@ select = [
     "ALL"
 ]
 
+ignore = [
+    "PLR2004",
+    "BLE001",
+    "SIM115",
+    "S102",
+    "RET504",
+    "TRY300",
+    "PTH123",
+    "PD901",
+    "W293",
+    "PGH003"
+]
+
 [tool.ruff.lint.pydocstyle]
 convention = "google"
 

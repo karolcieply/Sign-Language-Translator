@@ -1,4 +1,5 @@
 """This module contains the user router for the FastAPI application."""
+
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -72,7 +73,7 @@ async def read_users(*, session: Annotated[AsyncSession, Depends(get_session)]) 
 
 @user_router.put("/users/{user_id}")
 async def update_user(
-    *, session: Annotated[AsyncSession, Depends(get_session)], user_id: int, user: UserUpdate,
+    *, session: Annotated[AsyncSession, Depends(get_session)], user_id: int, user: UserUpdate
 ) -> UserRead:
     """Update an existing user.
 

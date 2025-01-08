@@ -1,4 +1,5 @@
-# components/admin_panel.py
+"""Admin panel page."""
+
 import time
 
 import pandas as pd
@@ -6,6 +7,7 @@ import streamlit as st
 
 from frontend.models import UserRequest
 from frontend.utils.api_interactions import api_get_users, api_update_user
+
 st.title("Admin Panel")
 
 st.markdown("### Welcome to the Admin Panel!")
@@ -15,11 +17,7 @@ if "users" not in st.session_state:
 df = pd.DataFrame(st.session_state["users"])
 
 edited_df = st.data_editor(
-    df,
-    column_config={"hashed_password": None},
-    disabled=["id"],
-    use_container_width=True,
-    hide_index=True,
+    df, column_config={"hashed_password": None}, disabled=["id"], use_container_width=True, hide_index=True
 )
 
 changes_mask = (edited_df != df).any(axis=1)
@@ -33,4 +31,3 @@ if st.button("Save user changes", disabled=updated_df.empty):
         st.rerun()
     else:
         st.error("Failed to save changes.")
-

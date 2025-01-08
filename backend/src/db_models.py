@@ -28,9 +28,7 @@ class User(SQLModel, table=True):
     is_active: bool = True
     is_admin: bool = False
 
-    recordings: list["Recording"] = Relationship(
-        back_populates="user", cascade_delete=True,
-    )
+    recordings: list["Recording"] = Relationship(back_populates="user", cascade_delete=True)
 
 
 class Recording(SQLModel, table=True):
@@ -40,9 +38,9 @@ class Recording(SQLModel, table=True):
         id (int | None): The unique identifier for the recording. Defaults to None.
         user_id (int): The ID of the user who created the recording. This is a foreign key referencing the user table.
         created_at (datetime.datetime): The timestamp when the recording was created. Defaults to the current datetime.
-        prediction (str | None): The predicted translation of the recording. This should be changed to an ENUM in the future.
+        prediction (str | None): The predicted translation of the recording.
         feedback (float | None): The feedback score for the recording.
-        images (list["Image"]): A list of images associated with the recording. This relationship has cascade delete enabled.
+        images (list["Image"]): A list of images associated with the recording.
         user (User): The user who created the recording.
     """
 
@@ -52,9 +50,7 @@ class Recording(SQLModel, table=True):
     prediction: str | None = None  # change to ENUM
     feedback: float | None = None
 
-    images: list["Image"] = Relationship(
-        back_populates="recording", cascade_delete=True,
-    )
+    images: list["Image"] = Relationship(back_populates="recording", cascade_delete=True)
     user: User = Relationship(back_populates="recordings")
 
 

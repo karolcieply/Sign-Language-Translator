@@ -1,10 +1,12 @@
+"""A service class to handle authentication-related operations."""
+
 import os
 from datetime import UTC, datetime, timedelta
 
 import jwt
 from passlib.context import CryptContext
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, or_
 
 from backend.src.db_models import User
 
@@ -33,9 +35,7 @@ class AuthService:
 
     async def get_user(self, session: AsyncSession, username: str, email: str | None = None) -> User | None:
         """Fetch a user by username from the database."""
-        result = await session.execute(
-            select(User).where(or_(User.username == username, User.email == email)),
-        )
+        result = await session.execute(select(User).where(or_(User.username == username, User.email == email)))
         user_record = result.scalars().first()
         if user_record:
             return user_record

@@ -1,4 +1,5 @@
 """This module contains the recording router for the FastAPI application."""
+
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -13,7 +14,7 @@ recording_router = APIRouter()
 
 @recording_router.post("/recordings/")
 async def create_recording(
-    *, session: Annotated[AsyncSession, Depends(get_session)], recording: Recording,
+    *, session: Annotated[AsyncSession, Depends(get_session)], recording: Recording
 ) -> Recording:
     """Create a new recording.
 
@@ -34,9 +35,7 @@ async def create_recording(
 
 
 @recording_router.get("/recordings/{recording_id}")
-async def read_recording(
-    *, session: Annotated[AsyncSession, Depends(get_session)], recording_id: int,
-) -> Recording:
+async def read_recording(*, session: Annotated[AsyncSession, Depends(get_session)], recording_id: int) -> Recording:
     """Endpoint to retrieve a recording by its ID.
 
     Args:
@@ -73,10 +72,7 @@ async def read_recordings(*, session: Annotated[AsyncSession, Depends(get_sessio
 
 @recording_router.put("/recordings/{recording_id}")
 async def update_recording(
-    *,
-    session: Annotated[AsyncSession, Depends(get_session)],
-    recording_id: int,
-    recording: Recording,
+    *, session: Annotated[AsyncSession, Depends(get_session)], recording_id: int, recording: Recording
 ) -> Recording:
     """Update an existing recording.
 
@@ -105,9 +101,7 @@ async def update_recording(
 
 
 @recording_router.delete("/recordings/{recording_id}")
-async def delete_recording(
-    *, session: Annotated[AsyncSession, Depends(get_session)], recording_id: int,
-) -> Recording:
+async def delete_recording(*, session: Annotated[AsyncSession, Depends(get_session)], recording_id: int) -> Recording:
     """Delete a recording by its ID.
 
     Args:

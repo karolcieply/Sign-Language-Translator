@@ -1,6 +1,8 @@
+"""Router for authentication endpoints."""
+
 from datetime import timedelta
-from typing import Annotated
 from http import HTTPStatus
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -20,8 +22,7 @@ auth_service = AuthService()
 
 @auth_router.post("/login")
 async def login(
-    session: Annotated[AsyncSession, Depends(get_session)],
-    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    session: Annotated[AsyncSession, Depends(get_session)], form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ) -> LoginResponse:
     """Log in a user and return an access token."""
     user = await auth_service.get_user(session, form_data.username)
@@ -33,10 +34,7 @@ async def login(
 
     # Create short-lived access token
     access_token_expires = timedelta(minutes=15)  # or from config
-    access_token = auth_service.create_access_token(
-        data={"sub": user.username},
-        expires_delta=access_token_expires,
-    )
+    access_token = auth_service.create_access_token(data={"sub": user.username}, expires_delta=access_token_expires)
 
     return LoginResponse(access_token=access_token, is_admin=user.is_admin, user_id=user.id)
 
@@ -57,9 +55,6 @@ async def register(session: Annotated[AsyncSession, Depends(get_session)], form_
 
     # Create short-lived access token
     access_token_expires = timedelta(minutes=15)
-    access_token = auth_service.create_access_token(
-        data={"sub": new_user.username},
-        expires_delta=access_token_expires,
-    )
+    access_token = auth_service.create_access_token(data={"sub": new_user.username}, expires_delta=access_token_expires)
 
-    return LoginResponse(access_token=access_token, is_admin = new_user.is_admin, user_id = new_user.id)
+    return LoginResponse(access_token=access_token, is_admin=new_user.is_admin, user_id=new_user.id)

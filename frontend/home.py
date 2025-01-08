@@ -1,8 +1,10 @@
+"""Login and register page for frontend."""
+
 import time
 
 import streamlit as st
 import utils.api_interactions as api
-from models import LoginRequest, UserRequest, RegisterUserRequest
+from models import LoginRequest, RegisterUserRequest
 
 if "page" not in st.session_state:
     st.session_state["page"] = None
@@ -61,7 +63,11 @@ else:
         confirm_password = st.text_input("Confirm Password", type="password", key="confirm_password")
 
         if st.button("Register"):
-            if len(reg_password) < 8 or not any(char.isdigit() for char in reg_password) or not any(char.isalpha() for char in reg_password):
+            if (
+                len(reg_password) < 8
+                or not any(char.isdigit() for char in reg_password)
+                or not any(char.isalpha() for char in reg_password)
+            ):
                 st.error("Password must be at least 8 characters long and contain at least one letter and one digit.")
             elif reg_password != confirm_password:
                 st.error("Passwords do not match!")
