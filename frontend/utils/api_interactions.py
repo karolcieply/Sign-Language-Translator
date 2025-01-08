@@ -50,7 +50,6 @@ def api_register(request_data: RegisterUserRequest) -> LoginResponse | dict:
         dict: Response message.
     """
     try:
-        st.write(f"{request_data.dict()}")
         with requests.post(
             url=f"http://{frontend_settings.backend_server}/auth/register",
             headers={"Content-Type": "application/json"},
