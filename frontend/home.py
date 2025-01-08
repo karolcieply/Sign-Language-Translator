@@ -49,8 +49,7 @@ else:
                     st.session_state["is_admin"] = response.is_admin
                     st.session_state["user_id"] = response.user_id
                     st.success("Login successful! Token stored in session state.")
-                    st.write(f"st.session_state: {st.session_state}")
-                    time.sleep(2)
+                    time.sleep(1)
                     st.rerun()
             except Exception as e:
                 st.error(f"Error: {e}")
@@ -84,8 +83,7 @@ else:
                         st.session_state["is_admin"] = response.is_admin
                         st.session_state["user_id"] = response.user_id
                         st.success("Registration successful!")
-                        time.sleep(2)
-                        st.write(f"st.session_state: {st.session_state}")
+                        time.sleep(1)
                         st.rerun()
                 except Exception as e:
                     st.error(f"Error: {e}")

@@ -227,7 +227,7 @@ html_code = f"""
 """
 
 # Use components.html to display your custom HTML/JS in Streamlit
-components.html(html_code, height=700, scrolling=True)
+components.html(html_code, height=600, scrolling=True)
 
 st.write("---")
 st.write("**Instructions**:")
