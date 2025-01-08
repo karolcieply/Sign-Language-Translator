@@ -11,7 +11,7 @@ ENV POETRY_NO_INTERACTION=1 \
     PATH="/app/.venv/bin:$PATH"
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
+    && apt-get install -y --no-install-recommends curl libgl1 libglib2.0-0 \
     && curl -sSL https://install.python-poetry.org | python3 - \
     && apt-get remove --purge -y curl \
     && apt-get clean \
