@@ -8,8 +8,6 @@ from pydantic import ValidationError
 
 from frontend.models import frontend_settings, LoginRequest, LoginResponse, RegisterUserRequest, UserRequest
 
-backend_url = frontend_settings.backend_server
-
 
 def api_login(request_data: LoginRequest) -> LoginResponse | dict:
     """Log in user and return access token and admin status.
@@ -22,7 +20,7 @@ def api_login(request_data: LoginRequest) -> LoginResponse | dict:
     """
     try:
         with requests.post(
-            url=f"http://{backend_url}/auth/login",
+            url=f"http://{frontend_settings.backend_server}/auth/login",
             headers={"Content-Type": "application/x-www-form-urlencoded"},
             data=request_data.dict(),
             timeout=10,
@@ -54,7 +52,7 @@ def api_register(request_data: RegisterUserRequest) -> LoginResponse | dict:
     try:
         st.write(f"{request_data.dict()}")
         with requests.post(
-            url=f"http://{backend_url}/auth/register",
+            url=f"http://{frontend_settings.backend_server}/auth/register",
             headers={"Content-Type": "application/json"},
             json=request_data.dict(),
             timeout=10,
@@ -77,7 +75,7 @@ def api_get_users() -> list[UserRequest]:
     """
     try:
         with requests.get(
-            url=f"http://{backend_url}/users", headers={"Content-Type": "application/json"}, timeout=10
+            url=f"http://{frontend_settings.backend_server}/users", headers={"Content-Type": "application/json"}, timeout=10
         ) as response:
             response.raise_for_status()
             return response.json()
@@ -99,7 +97,7 @@ def api_update_user(request_data: list[UserRequest]) -> True:
     try:
         for user in request_data:
             response = requests.put(
-                url=f"http://{backend_url}/users/{user.id}",
+                url=f"http://{frontend_settings.backend_server}/users/{user.id}",
                 headers={"Content-Type": "application/json"},
                 json=user.dict(exclude={"id"}),
                 timeout=10,
