@@ -5,17 +5,18 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class BaseSettings(BaseSettings):
-    """Microlearning base settings."""
+    """Base settings."""
 
     # If environment variables do not exist, .env file is taken
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
 
 class BackendSettings(BaseSettings):
-    """Frontend settings model."""
+    """Backend settings model."""
 
     secret_key: str
-
+    algorithm: str = "HS256"
+    access_token_expire_minutes: int = 15
 
 class TranslateRequest(BaseModel):
     """Pydantic model for the translation request body."""
@@ -45,3 +46,5 @@ class RegisterRequest(BaseModel):
     username: str
     email: str
     password: str
+
+backend_settings = BackendSettings()

@@ -5,7 +5,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class BaseSettings(BaseSettings):
-    """Microlearning base settings."""
+    """Base settings."""
 
     # If environment variables do not exist, .env file is taken
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
@@ -52,3 +52,6 @@ class RegisterUserRequest(UserRequest):
     password: str
     username: str
     email: str
+
+
+frontend_settings = FrontendSettings()

@@ -9,15 +9,11 @@ from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from backend.src.db_models import User
+from backend.src.models import backend_settings
 
-SECRET_KEY = os.environ.get("SECRET_KEY")
-ALGORITHM = "HS256"
-
-# Typically, short-lived access tokens (e.g., 15-30 minutes)
-ACCESS_TOKEN_EXPIRE_MINUTES = 15
-
-# Longer-lived refresh tokens (e.g., 7 days)
-REFRESH_TOKEN_EXPIRE_DAYS = 7
+SECRET_KEY = backend_settings.secret_key
+ALGORITHM = backend_settings.algorithm
+ACCESS_TOKEN_EXPIRE_MINUTES = backend_settings.access_token_expire_minutes
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -50,21 +46,3 @@ class AuthService:
             expire = datetime.now(UTC) + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
         to_encode.update({"exp": expire})
         return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
-    def create_refresh_token(self, data: dict, expires_delta: timedelta | None = None) -> str:
-        """Create a longer-lived JWT refresh token."""
-        to_encode = data.copy()
-        if expires_delta:
-            expire = datetime.now(UTC) + expires_delta
-        else:
-            expire = datetime.now(UTC) + timedelta(days=REFRESH_TOKEN_EXPIRE_DAYS)
-        to_encode.update({"exp": expire})
-        return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-
-    def decode_token(self, token: str) -> dict | None:
-        """Decode a JWT token."""
-        try:
-            payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-            return payload
-        except jwt.JWTError:
-            return None

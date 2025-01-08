@@ -6,10 +6,9 @@ import requests
 import streamlit as st
 from pydantic import ValidationError
 
-from frontend.models import FrontendSettings, LoginRequest, LoginResponse, RegisterUserRequest, UserRequest
+from frontend.models import frontend_settings, LoginRequest, LoginResponse, RegisterUserRequest, UserRequest
 
-settings = FrontendSettings()
-backend_url = settings.backend_server
+backend_url = frontend_settings.backend_server
 
 
 def api_login(request_data: LoginRequest) -> LoginResponse | dict:
