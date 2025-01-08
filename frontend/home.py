@@ -1,10 +1,13 @@
-import streamlit as st
-import requests
-import utils.api_interactions as api
-from models import LoginRequest
+import time
 
-st.session_state["page"] = None
-st.session_state["is_admin"] = False
+import streamlit as st
+import utils.api_interactions as api
+from models import LoginRequest, UserRequest, RegisterUserRequest
+
+if "page" not in st.session_state:
+    st.session_state["page"] = None
+if "is_admin" not in st.session_state:
+    st.session_state["is_admin"] = False
 if "token" not in st.session_state:
     st.session_state["token"] = None
 
@@ -12,8 +15,10 @@ if "token" not in st.session_state:
 if st.session_state["token"]:
     if st.sidebar.button("Translation"):
         st.session_state["page"] = "Translation"
-    if st.session_state["is_admin"] and st.sidebar.button("Admin panel"):
-        st.session_state["page"] = "Admin panel"
+    if st.session_state["is_admin"]:
+        button = st.sidebar.button("Admin panel")
+        if button:
+            st.session_state["page"] = "Admin panel"
     if st.sidebar.button("Logout"):
         st.session_state["token"] = None
         st.session_state["page"] = None
@@ -40,7 +45,10 @@ else:
                 else:
                     st.session_state["token"] = response.access_token
                     st.session_state["is_admin"] = response.is_admin
+                    st.session_state["user_id"] = response.user_id
                     st.success("Login successful! Token stored in session state.")
+                    st.write(f"st.session_state: {st.session_state}")
+                    time.sleep(2)
                     st.rerun()
             except Exception as e:
                 st.error(f"Error: {e}")
@@ -53,24 +61,25 @@ else:
         confirm_password = st.text_input("Confirm Password", type="password", key="confirm_password")
 
         if st.button("Register"):
-            if reg_password != confirm_password:
+            if len(reg_password) < 8 or not any(char.isdigit() for char in reg_password) or not any(char.isalpha() for char in reg_password):
+                st.error("Password must be at least 8 characters long and contain at least one letter and one digit.")
+            elif reg_password != confirm_password:
                 st.error("Passwords do not match!")
+            elif "@" not in reg_email or "." not in reg_email:
+                st.error("Invalid email address!")
             else:
-                register_url = "http://host.docker.internal/register"
+                register_request = RegisterUserRequest(username=reg_username, email=reg_email, password=reg_password)
                 try:
-                    response = requests.post(
-                        register_url,
-                        headers={"Content-Type": "application/json"},
-                        json={
-                            "username": reg_username,
-                            "email": reg_email,
-                            "password": reg_password,
-                        },
-                    )
-
-                    if response.status_code == 201:
-                        st.success("Registration successful! You can now log in.")
+                    response = api.api_register(register_request)
+                    if "error" in response:
+                        st.error(response["error"])
                     else:
-                        st.error(f"Registration failed. Status: {response.status_code}, Detail: {response.text}")
+                        st.session_state["token"] = response.access_token
+                        st.session_state["is_admin"] = response.is_admin
+                        st.session_state["user_id"] = response.user_id
+                        st.success("Registration successful!")
+                        time.sleep(2)
+                        st.write(f"st.session_state: {st.session_state}")
+                        st.rerun()
                 except Exception as e:
                     st.error(f"Error: {e}")
