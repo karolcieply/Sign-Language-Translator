@@ -36,6 +36,9 @@ async def translate(data: TranslateRequest, session: Annotated[AsyncSession, Dep
     await add_images(recording.id, data.frames, session)
 
     prediction = translation_service.process_frames(data.frames)
+    recording = await session.get(Recording, recording.id)
+    recording.prediction = prediction
+    await session.commit()
 
     return {"prediction": prediction, "recording_id": recording.id}
 
