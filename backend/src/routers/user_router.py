@@ -4,8 +4,9 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
+
 from backend.src.db import get_session
-from backend.src.models import User, UserCreate, UserRead, UserUpdate
+from backend.src.db_models import User, UserCreate, UserRead, UserUpdate
 
 user_router = APIRouter()
 
@@ -71,7 +72,7 @@ async def read_users(*, session: Annotated[AsyncSession, Depends(get_session)]) 
 
 @user_router.put("/users/{user_id}")
 async def update_user(
-    *, session: Annotated[AsyncSession, Depends(get_session)], user_id: int, user: UserUpdate
+    *, session: Annotated[AsyncSession, Depends(get_session)], user_id: int, user: UserUpdate,
 ) -> UserRead:
     """Update an existing user.
 

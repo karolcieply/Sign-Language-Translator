@@ -3,6 +3,7 @@
 import datetime
 
 from sqlmodel import Field, Relationship, SQLModel
+
 from backend.src.utils import hash_password
 
 
@@ -28,7 +29,7 @@ class User(SQLModel, table=True):
     is_admin: bool = False
 
     recordings: list["Recording"] = Relationship(
-        back_populates="user", cascade_delete=True
+        back_populates="user", cascade_delete=True,
     )
 
 
@@ -52,7 +53,7 @@ class Recording(SQLModel, table=True):
     feedback: float | None = None
 
     images: list["Image"] = Relationship(
-        back_populates="recording", cascade_delete=True
+        back_populates="recording", cascade_delete=True,
     )
     user: User = Relationship(back_populates="recordings")
 
@@ -70,7 +71,7 @@ class Image(SQLModel, table=True):
     """
 
     id: int | None = Field(primary_key=True, default=None)
-    content: bytes
+    content: str
     recording_id: int = Field(foreign_key="recording.id", ondelete="CASCADE")
 
     recording: Recording = Relationship(back_populates="images")

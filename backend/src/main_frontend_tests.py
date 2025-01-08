@@ -1,18 +1,11 @@
 # login_register.py
-import base64
 import os
-import random
 from datetime import datetime, timedelta
-from fastapi.middleware.cors import CORSMiddleware
 
-from fastapi import FastAPI, Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from pydantic import BaseModel
-from passlib.context import CryptContext
-from typing import Optional
-from datetime import datetime, timedelta
-import os
 import jwt
+from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from passlib.context import CryptContext
 
 ###############################################################################
 # SETTINGS & CONFIG
@@ -35,20 +28,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 # MODELS
 ###############################################################################
 
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-    is_admin: bool
 
-class TokenData(BaseModel):
-    username: Optional[str] = None
-
-class User(BaseModel):
-    username: str
-    disabled: bool = False
-
-class UserInDB(User):
-    hashed_password: str
 
 ###############################################################################
 # FAKE DATABASE (EXAMPLE ONLY)
@@ -62,7 +42,7 @@ fake_users_db = {
         "username": "alice",
         "hashed_password": "$2b$12$Z1U2vwD67ra2IomKXJS7Q.efcJzeYJErHJYvaXt4tgLKgNyUljj0C",  # "wonderland"
         "disabled": False,
-    }
+    },
 }
 
 ###############################################################################
@@ -77,14 +57,14 @@ def get_password_hash(password: str) -> str:
     """Hash a plain-text password (for creating new users)."""
     return pwd_context.hash(password)
 
-def get_user(username: str) -> Optional[UserInDB]:
+def get_user(username: str) -> UserInDB | None:
     """Fetch user data from the (fake) DB by username."""
     user_dict = fake_users_db.get(username)
     if user_dict:
         return UserInDB(**user_dict)
     return None
 
-def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -> str:
+def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     """Create a JWT token with optional expiration."""
     to_encode = data.copy()
     if expires_delta:
@@ -95,7 +75,7 @@ def create_access_token(data: dict, expires_delta: Optional[timedelta] = None) -
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
-def decode_access_token(token: str) -> Optional[dict]:
+def decode_access_token(token: str) -> dict | None:
     """Decode a JWT token, returns the payload or None if invalid/expired."""
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
@@ -107,43 +87,10 @@ def decode_access_token(token: str) -> Optional[dict]:
 # AUTHENTICATION FLOW
 ###############################################################################
 
-@app.post("/login", response_model=Token)
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    """
-    1) Client sends username & password via form data.
-    2) Verify user exists & password is correct.
-    3) Return short-lived JWT if valid.
-    """
-    user_in_db = get_user(form_data.username)
-    if not user_in_db:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid username or password1",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    if not verify_password(form_data.password, user_in_db.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid username or password2",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    if user_in_db.disabled:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="User is disabled",
-        )
 
-    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
-        data={"sub": user_in_db.username},
-        expires_delta=access_token_expires,
-    )
-
-    return {"access_token": access_token, "token_type": "bearer", "is_admin": True}
 
 def get_current_user(token: str = Depends(oauth2_scheme)) -> UserInDB:
-    """
-    This function is used by protected endpoints.
+    """This function is used by protected endpoints.
     1) Extract token from "Authorization: Bearer <token>".
     2) Decode & validate the token.
     3) Fetch the user from DB.
@@ -182,43 +129,7 @@ def get_current_user(token: str = Depends(oauth2_scheme)) -> UserInDB:
 
 @app.get("/users/me")
 def read_users_me(current_user: UserInDB = Depends(get_current_user)):
-    """
-    Example protected endpoint.
+    """Example protected endpoint.
     If the user isn't logged in (JWT invalid/expired), they'll get 401.
     """
     return {"username": current_user.username, "disabled": current_user.disabled}
-
-# Update these based on what you need
-origins = [
-    "http://localhost:8501",  # Streamlit
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],           # or ["*"] for any origin (less secure)
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
-class FramesRequest(BaseModel):
-    frames: list[str]
-
-@app.post("/upload_frames")
-def upload_frames(data: FramesRequest):
-    # data.frames is a list of base64-encoded PNG strings: "data:image/png;base64,iVBORw0KG..."
-    num_frames = len(data.frames)
-    save_dir = "captured_frames"
-    os.makedirs(save_dir, exist_ok=True)
-    # (Optional) do something with the frames, e.g. decode them:
-    for idx, f in enumerate(data.frames):
-        b64_str = f.split(",")[1]  # remove "data:image/png;base64,"
-        img_bytes = base64.b64decode(b64_str)
-        # Now you have the image bytes to e.g. save to disk, process, etc.
-        with open(os.path.join(save_dir, f"frame_{idx}.png"), "wb") as img_file:
-            img_file.write(img_bytes)
-        # feed to model, store on disk, etc.
-
-    # Return dummy inference
-    prediction = random.choice(["cat", "dog", "bird", "car", "person"])
-    return {"prediction": prediction, "frame_count": num_frames}

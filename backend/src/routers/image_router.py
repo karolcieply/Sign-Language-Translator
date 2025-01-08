@@ -2,10 +2,11 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlmodel import select
+
 from backend.src.db import get_session
-from backend.src.models import Image
+from backend.src.db_models import Image
 
 image_router = APIRouter()
 
@@ -69,7 +70,7 @@ async def read_images(*, session: Annotated[AsyncSession, Depends(get_session)])
 
 @image_router.put("/images/{image_id}")
 async def update_image(
-    *, session: Annotated[AsyncSession, Depends(get_session)], image_id: int, image: Image
+    *, session: Annotated[AsyncSession, Depends(get_session)], image_id: int, image: Image,
 ) -> Image:
     """Update an existing image.
 
