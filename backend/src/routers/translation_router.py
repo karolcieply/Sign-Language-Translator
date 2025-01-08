@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from backend.src.db import get_session
 from backend.src.db_models import Image, Recording
 from backend.src.models import FeedbackRequest, TranslateRequest
+from backend.src.prediction import base64_to_ndarray
 
 translation_router = APIRouter()
 
@@ -35,8 +36,10 @@ async def translate(data: TranslateRequest, session: Annotated[AsyncSession, Dep
     await add_images(recording.id, data.frames, session)
 
     # perform prediction
+    print("klatki", flush=True)
+    print(base64_to_ndarray(data.frames), flush=True)
 
-    return {"prediction": "tomek", "recording_id": 1}
+    return {"prediction": "tomek", "recording_id": recording.id}
 
 
 @translation_router.post("/feedback")
