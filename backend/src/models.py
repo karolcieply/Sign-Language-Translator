@@ -4,13 +4,6 @@ from pydantic import BaseModel
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class BaseSettings(BaseSettings):
-    """Base settings."""
-
-    # If environment variables do not exist, .env file is taken
-    model_config = SettingsConfigDict(env_file=".env", extra="ignore")
-
-
 class BackendSettings(BaseSettings):
     """Backend settings model."""
 
