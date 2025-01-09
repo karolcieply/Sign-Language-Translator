@@ -11,7 +11,7 @@ ENV POETRY_NO_INTERACTION=1 \
     PATH="/app/.venv/bin:$PATH"
 
 RUN apt-get update \
-    && apt-get install -y --no-install-recommends curl \
+    && apt-get install -y --no-install-recommends curl libgl1 libglib2.0-0 libopencv-dev\
     && curl -sSL https://install.python-poetry.org | python3 - \
     && apt-get remove --purge -y curl \
     && apt-get clean \
@@ -22,8 +22,8 @@ COPY pyproject.toml poetry.lock /app/
 RUN poetry install --only main,backend --no-root \
     && rm -rf $POETRY_CACHE_DIR
 
-COPY backend/src /app/src
+COPY backend /app/backend
 
 EXPOSE 80
 
-CMD ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "backend.src.main:app", "--host", "0.0.0.0", "--port", "80"]

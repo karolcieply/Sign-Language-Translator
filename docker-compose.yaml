@@ -12,7 +12,7 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_SERVER: ${POSTGRES_SERVER}
       POSTGRES_PORT: ${POSTGRES_PORT}
-
+      SECRET_KEY: ${SECRET_KEY}
     depends_on:
       - postgres
 
@@ -21,6 +21,8 @@ services:
       context: .
       dockerfile: frontend.dockerfile
     container_name: frontend
+    environment:
+      BACKEND_SERVER: ${BACKEND_SERVER}
     ports:
       - "8501:8501"
     
@@ -31,5 +33,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - .db/:/var/lib/postgresql/data
     ports:
       - "5432:5432"

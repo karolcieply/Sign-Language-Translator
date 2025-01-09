@@ -2,7 +2,7 @@
 name = "sign-lanugage-translator"
 version = "0.1.0"
 description = "Realizacja projektu w ramach przedmiotu Modelowanie i analiza systemów informatycznych"
-authors = ["Your Name <you@example.com>"]
+authors = ["Wojciech Jasiewicz <mail>; Karol Ciepły <mail>; Kacper Moll kacmol418@polsl.pl"]
 license = "MIT"
 readme = "README.md"
 
@@ -14,10 +14,18 @@ sqlmodel = "^0.0.22"
 pydantic-settings = "^2.7.1"
 sqlalchemy = {extras = ["asyncio"], version = "^2.0.36"}
 asyncpg = "^0.30.0"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-multipart = "^0.0.20"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+pyjwt = "^2.10.1"
 
 [tool.poetry.group.backend.dependencies]
 fastapi = "^0.115.6"
 uvicorn = "^0.34.0"
+opencv-python = "^4.10.0.84"
+h5py = "^3.12.1"
+tensorflow = "^2.18.0"
+mediapipe = "^0.10.20"
 
 [tool.poetry.group.frontend.dependencies]
 streamlit = "^1.41.1"
@@ -46,6 +54,19 @@ docstring-code-line-length = "dynamic"
 select = [
     # Rules list: https://docs.astral.sh/ruff/rules/
     "ALL"
+]
+
+ignore = [
+    "PLR2004",
+    "BLE001",
+    "SIM115",
+    "S102",
+    "RET504",
+    "TRY300",
+    "PTH123",
+    "PD901",
+    "W293",
+    "PGH003"
 ]
 
 [tool.ruff.lint.pydocstyle]

@@ -1,11 +1,13 @@
 """This module contains the image router for the FastAPI application."""
+
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from src.db import get_session
-from src.models import Image
+from sqlmodel import select
+
+from backend.src.db import get_session
+from backend.src.db_models import Image
 
 image_router = APIRouter()
 
@@ -34,14 +36,14 @@ async def create_image(*, session: Annotated[AsyncSession, Depends(get_session)]
 @image_router.get("/images/{image_id}")
 async def read_image(*, session: Annotated[AsyncSession, Depends(get_session)], image_id: int) -> Image:
     """Retrieve an image by its ID.
-    
+
     Args:
         session (Session): The database session dependency.
         image_id (int): The ID of the image to retrieve.
-    
+
     Returns:
         Image: The image object if found.
-    
+
     Raises:
         HTTPException: If the image is not found, raises a 404 HTTP exception.
     """
@@ -68,9 +70,7 @@ async def read_images(*, session: Annotated[AsyncSession, Depends(get_session)])
 
 
 @image_router.put("/images/{image_id}")
-async def update_image(
-    *, session: Annotated[AsyncSession, Depends(get_session)], image_id: int, image: Image
-) -> Image:
+async def update_image(*, session: Annotated[AsyncSession, Depends(get_session)], image_id: int, image: Image) -> Image:
     """Update an existing image.
 
     This endpoint updates the details of an existing image in the database.

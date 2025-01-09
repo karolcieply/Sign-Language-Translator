@@ -1,4 +1,5 @@
 """Config module for the application."""
+
 from pydantic_settings import BaseSettings
 
 
@@ -12,6 +13,7 @@ class DBSettings(BaseSettings):
         POSTGRES_PORT (int): The port number for the PostgreSQL database.
         POSTGRES_DB (str): The name of the PostgreSQL database.
     """
+
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
     POSTGRES_SERVER: str

@@ -4,13 +4,13 @@ healthcheck,: install_requirements healthcheck_docker healthcheck_env
 
 healthcheck: install_requirements healthcheck_docker healthcheck_env
 
-sign_language_translator: healthcheck ruff
+sign_language_translator: healthcheck
 	docker compose -f docker-compose.yaml up --build frontend backend -d
 
 backend: healthcheck, 
 		docker compose -f docker-compose.yaml up --build backend -d
 
-frontend: healthcheck, ruff
+frontend: healthcheck
 		docker compose -f docker-compose.yaml up --build frontend -d
 
 OSFLAG 				:=
